@@ -4,5 +4,7 @@ export const serverAddress = {
 }
 export const clientAddress = {
     port: 5173,
-    hostname: 'localhost'
+    hostname: '192.168.1.70'
 }
+export const apiBaseUrl = 'http://192.168.1.70:5000'
+export const textFilesPath = 'C:/Users/TOP/Documents/sync-notes/'
