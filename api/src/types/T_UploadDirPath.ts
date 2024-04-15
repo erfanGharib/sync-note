@@ -1,1 +1,1 @@
-export type T_UploadDirPath = 'rooms';
+export type T_UploadDirPath = '';

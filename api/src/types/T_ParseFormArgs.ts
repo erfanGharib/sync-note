@@ -8,6 +8,6 @@ type T_ExpectedMimeTypes = (
 export interface T_ParseFormArgs {
     fileName?: string;
     maxFileSize?: number;
-    uploadPath: T_UploadDirPath;
-    expectedMimeTypes: T_ExpectedMimeTypes[];
+    uploadPath?: T_UploadDirPath;
+    expectedMimeTypes?: T_ExpectedMimeTypes[];
 }
