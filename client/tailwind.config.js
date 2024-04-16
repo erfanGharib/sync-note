@@ -1,13 +1,22 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './client/src/**/**/*.{svg,html,js,tsx,ts}',
-    './client/src/**/*.{svg,html,js,tsx,ts}',
-    './client/src/components/**/*.{svg,html,js,jsx,tsx,ts}',
-    './client/src/components/**/**/*.{svg,html,js,jsx,tsx,ts}',
-    './client/src/assets/**/*.{svg,html,js,jsx,tsx,ts}',
+    './src/*.{vue,svg,html,js,tsx,ts}',
+    './src/**/**/*.{vue,svg,html,js,tsx,ts}',
+    './src/**/*.{vue,svg,html,js,tsx,ts}',
+    './src/components/*.{vue,svg,html,js,jsx,tsx,ts}',
+    './src/components/**/*.{vue,svg,html,js,jsx,tsx,ts}',
+    './src/components/**/**/*.{vue,svg,html,js,jsx,tsx,ts}',
+    './src/assets/**/*.{vue,svg,html,js,jsx,tsx,ts}',
   ],
-  theme: {},
+  theme: {
+    extend: {
+      colors: {
+        'black-900': '#111',
+        'black-800': '#222',
+      }
+    }
+  },
   plugins: [
     ({ addUtilities }) => {
       addUtilities({
