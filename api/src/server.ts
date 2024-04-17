@@ -2,13 +2,21 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import fs from 'fs';
+import https from 'https';
 import morgan from 'morgan';
 import path from 'path';
 import { env } from 'process';
-import { clientAddress, serverAddress } from '../../shared/global.js';
+import { parseForm } from './middlewares/parseForm.js';
 import { createHttpError } from './utils/createHttpError.js';
 
+const privateKey = fs.readFileSync('C:/Users/TOP/Documents/ssl/localhost.key', 'utf8');
+const certificate = fs.readFileSync('C:/Users/TOP/Documents/ssl/local.network.crt', 'utf8');
 const app = express();
+
+const sslOptions = {
+  key: privateKey,
+  cert: certificate
+}
 
 const handle404 = (req, res, next) => {
 	next(createHttpError(404));
@@ -40,23 +48,28 @@ const setupRoutes = () => {
 }
 
 export const bootstrapServer = async () => {
-	env.NODE_ENV === 'production' 
-		? app.use('/*', express.static(path.join(process.cwd(), '../../client/dist')))
-		: app.use(cors({
-			origin: `http://${clientAddress.hostname}:${clientAddress.port}`,
-			credentials: true
-		}))
+	if(env.NODE_ENV === 'production') {
+		app.use(express.static(path.join(process.cwd(), '../client/dist')))
+		app.get('/*', (req, res) => {
+			res.sendFile(path.join(process.cwd(), '../client/dist/index.html'))
+		})
+	} else {
+		app.use(cors({ origin: `*` }))
+	}
 
 	app.use(morgan('dev'));
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: false }));
 	app.use(cookieParser());
-
+	app.use(parseForm())
+	
 	await setupRoutes();
 
 	app.use(handle404);
 	app.use(handleErrors);
-	app.listen(serverAddress.port, serverAddress.hostname, () => {
-		console.log(`Server is Available on http://${serverAddress.hostname}:${serverAddress.port}`);
-	})
+	const server = https.createServer(sslOptions, app);
+
+	server.listen(5000, () => {
+		console.log('Server running at http://192.168.1.70:5000/');
+	});
 }
