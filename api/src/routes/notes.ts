@@ -1,11 +1,8 @@
 import express from 'express';
 import { noteSchema } from '../../../shared/schemas/noteSchema.js';
-import { createNoteController, deleteNoteController, getNoteController } from '../controllers/notesController.js';
-import { parseForm } from '../middlewares/parseForm.js';
+import { createNoteController, deleteNoteController, editNoteController, getNoteController } from '../controllers/notesController.js';
 import { validateReqBody } from '../middlewares/validateReqBody.js';
 const notesRouter = express.Router();
-
-notesRouter.use(parseForm());
 
 notesRouter.post(
     '/create',
@@ -15,12 +12,12 @@ notesRouter.post(
 
 notesRouter.post(
     '/edit', 
-    validateReqBody(noteSchema),
-    createNoteController
+    validateReqBody({ ...noteSchema, oldTitle: noteSchema.title }),
+    editNoteController
 );
 
 notesRouter.post(
-    '/delete/:title', 
+    '/delete', 
     validateReqBody({ title: noteSchema.title }),
     deleteNoteController
 );

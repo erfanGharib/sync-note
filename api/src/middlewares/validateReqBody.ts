@@ -8,7 +8,7 @@ type T_ValidateReqBodyReturn = (req: Request, res: Response, next: NextFunction)
 export const validateReqBody: T_ValidateReqBody = (schema) => {
     return (req, res, next) => {
         if(!schema) 
-            throw Error('no property bound to `this` in `validateReqBody`');
+            throw Error('no schema passed in `validateReqBody`');
         
         Yup
         .object(schema)

@@ -2,22 +2,36 @@
 import { ref } from 'vue';
 import { _axios, apiEndpoints } from '../../../../shared/global';
 import { T_Notes } from '../../../../shared/types/T_Notes';
+import { clientTouchYStore } from '../../store/clientTouchY';
+import { notesInputStore } from '../../store/notesInput';
 import { fireDataFetchedEvent } from '../../utils/fireDataFetchedEvent';
 import { isMobileDevice } from '../../utils/isMobileDevice';
 
 defineProps<{ note: T_Notes }>();
 
+const clientTouchY = clientTouchYStore();
+const notesInput = notesInputStore();
+
 const isHovered = ref(false);
 const isCollapsed = ref(false);
 const buttons = [
     {
-        onclick: () => {console.log('edit')},
+        onclick: (note: T_Notes) => {
+            clientTouchY.updateValue(0)
+            notesInput.changeMode(true)
+            notesInput.updateValues({
+                ...note,
+                oldTitle: note.title
+            })
+        },
         iconName: "md-modeedit-outlined"
     },
     {
-        onclick: async (title: string) => {
+        onclick: async (note: T_Notes) => {
+            if(!confirm(`Are you sure you want to delete \`${note.title}\``)) return;
+
             const data = new FormData();
-            data.append('title', title);
+            data.append('title', note.title);
 
             await _axios.post(apiEndpoints.notes.delete, data)
             fireDataFetchedEvent();
@@ -49,7 +63,7 @@ const buttons = [
             :class='isMobileDevice() || isHovered ? "" : "!translate-x-0 !opacity-0"'
         >
             <button
-                @click='button.onclick(note.title)'
+                @click='button.onclick(note)'
                 v-for="button in buttons"
                 class='p-2 f-center border rounded-lg bg-black-800 hover:bg-orange-50 hover:bg-opacity-5 transition-all border-orange-50 border-opacity-30'
             >
