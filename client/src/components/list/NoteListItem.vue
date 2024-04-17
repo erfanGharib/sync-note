@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import axios from 'axios';
 import { ref } from 'vue';
-import { apiBaseUrl } from '../../../../shared/global';
+import { _axios, apiEndpoints } from '../../../../shared/global';
 import { T_Notes } from '../../../../shared/types/T_Notes';
 import { fireDataFetchedEvent } from '../../utils/fireDataFetchedEvent';
 import { isMobileDevice } from '../../utils/isMobileDevice';
@@ -16,8 +15,11 @@ const buttons = [
         iconName: "md-modeedit-outlined"
     },
     {
-        onclick: (title: string) => {
-            axios.post(`${apiBaseUrl}/notes/delete/${title}`, { title })
+        onclick: async (title: string) => {
+            const data = new FormData();
+            data.append('title', title);
+
+            await _axios.post(apiEndpoints.notes.delete, data)
             fireDataFetchedEvent();
         },
         iconName: "fa-regular-trash-alt"

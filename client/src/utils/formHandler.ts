@@ -1,14 +1,13 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import * as Yup from 'yup';
-import { apiBaseUrl } from '../../../shared/global';
-import T_ApiUrlsObj from '../../../shared/types/T_ApiUrlsObj';
+import { _axios } from '../../../shared/global';
 import { fireDataFetchedEvent } from './fireDataFetchedEvent';
 
 export type T_YupSchema = { [key: string]: Yup.StringSchema };
 export type T_Send = (e: Event, method?: 'put' | 'post') => void;
 type FormElements = [string, HTMLInputElement];
 type T_FormHandler = (args: {
-    endPoint: T_ApiUrlsObj;
+    endPoint: string;
     validationSchema: T_YupSchema;
     resetForm?: boolean;
     onSuccess?: (response: AxiosResponse) => void;
@@ -112,10 +111,9 @@ const formHandler: T_FormHandler = ({
             disableSubmitBtn(false);
         }
         if (_isFormValuesValid) {
-            await axios?.[method](
-                apiBaseUrl + endPoint,
-                data,
-                { withCredentials: true }
+            await _axios?.[method](
+                endPoint,
+                data
             )
                 .then((res) => {
                     onSuccess(res)

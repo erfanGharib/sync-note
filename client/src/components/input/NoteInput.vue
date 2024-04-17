@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { apiEndpoints } from "../../../../shared/global.ts";
 import { noteSchema } from "../../../../shared/schemas/noteSchema";
+import { clientTouchYStore } from "../../store/clientTouchY";
 import formHandler from "../../utils/formHandler";
+import { isMobileDevice } from '../../utils/isMobileDevice.ts';
 const isFocused = ref(false);
+const clientTouchY = clientTouchYStore();
 
 const { send } = formHandler({
-    endPoint: '/notes/create',
+    endPoint: apiEndpoints.notes.create,
     resetForm: true,
+    onSuccess: () => {
+        clientTouchY.updateValue(-100)
+    },
     validationSchema: noteSchema
 })
 </script>
@@ -35,8 +42,12 @@ const { send } = formHandler({
         ></textarea>
         <button
             type='submit'
-            :class='isFocused ? "" : "!translate-y-0"'
-            class=" translate-y-[300%] hover:bg-opacity-80 hover:shadow-[0_5px_15px_#f9731644] transition-all duration-300 p-3 md:p-2 text-orange-200 font-[500] bg-opacity-60 border-opacity-50 border-b-2 border-orange-400 bg-orange-500 rounded-lg md:w-20 w-full ml-auto"
+            :class='
+                isMobileDevice() 
+                    ? isFocused ? "" : "!translate-y-[300%]" 
+                    : ""
+            '
+            class=" translate-y-0 hover:bg-opacity-80 hover:shadow-[0_5px_15px_#f9731644] transition-all duration-300 p-3 md:p-2 text-orange-200 font-[500] bg-opacity-60 border-opacity-50 border-b-2 border-orange-400 bg-orange-500 rounded-lg md:w-20 w-full ml-auto"
         >
             Add
         </button>
