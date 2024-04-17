@@ -9,12 +9,7 @@
     "icons": [
       {
         "src": "sync-note-logo.png",
-        "sizes": "192x192",
-        "type": "image/png"
-      },
-      {
-        "src": "sync-note-logo.png",
-        "sizes": "512x512",
+        "sizes": "1080x1080",
         "type": "image/png"
       }
     ],
