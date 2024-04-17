@@ -20,6 +20,15 @@ module.exports = {
   plugins: [
     ({ addUtilities }) => {
       addUtilities({
+        '.click-effect': {
+          '@apply active:brightness-[.6] transition-all': {},
+        },
+        '.err': {
+          '@apply text-red-400 text-sm capitalize': {}
+        },
+        '.input, .textarea': {
+          '@apply rounded-lg p-4 outline-none text-orange-100 placeholder:text-orange-100 placeholder:text-opacity-50': {},
+        },
         '.f-center': {
           '@apply flex items-center justify-center': {},
         },

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "api:start": "cd api && node dist/api/src/index",
+    "start": "cd api && node dist/api/src/index",
     "api:build": "cd api && node scripts/build",
     "api:build:w": "cd api && node scripts/build --watch",
     "api:dev": "cd api && set NODE_ENV=development && nodemon --exec \"node dist/api/src/index\"",
@@ -24,6 +24,7 @@
     "http-status-codes": "^2.3.0",
     "morgan": "^1.10.0",
     "oh-vue-icons": "^1.0.0-rc3",
+    "open": "^10.1.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "yup": "^1.4.0"

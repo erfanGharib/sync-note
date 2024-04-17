@@ -44,22 +44,32 @@ html {
     @apply h-full;
 }
 body, #app {
-    @apply h-full w-full flex flex-col bg-[#111111] text-orange-50 overflow-hidden;
+    @apply h-full w-full flex flex-col bg-[#111111] text-orange-100 overflow-hidden;
     color-scheme: 'dark';
 }
 #app {
     @apply pt-5 md:pt-10 md:w-3/6 w-full mx-auto relative;
 }
 
-.input, .textarea {
-    @apply rounded-lg p-4 outline-none text-orange-100 placeholder:text-orange-100 placeholder:text-opacity-50;
-}
-
-.err {
-    @apply text-red-400 text-sm capitalize;
-}
-
 code {
     @apply mx-2;
     font-family: monospace;
+}
+
+::-webkit-scrollbar {
+    @apply rounded-md;
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    @apply rounded-sm;
+    background: #ffffff22; 
+}
+
+::-webkit-scrollbar-thumb {
+    @apply rounded-sm bg-orange-100 bg-opacity-50;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-opacity-70;
 }
