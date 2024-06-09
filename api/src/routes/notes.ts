@@ -27,4 +27,4 @@ notesRouter.get(
     getNoteController
 );
 
-export default { baseRoute: '/notes', router: notesRouter };
+export const _notesRouter = { baseRoute: '/notes', router: notesRouter };
