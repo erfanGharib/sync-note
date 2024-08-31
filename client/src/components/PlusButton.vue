@@ -13,7 +13,7 @@ const notesInput = notesInputStore();
             notesInput.changeMode(false);
             clientTouchY.updateValue(0)
         }' 
-        class='f-center click-effect rounded-full bg-red-500 w-14 h-14 p-3 absolute bottom-4 right-4 shadow-lg'
+        class='f-center click-effect rounded-2xl bg-red-500 w-14 h-14 p-3 absolute bottom-4 right-4 shadow-lg'
     >
         <v-icon name="hi-plus-sm" scale='1.5' />
     </button>

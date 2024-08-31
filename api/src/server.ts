@@ -1,25 +1,23 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
-import fs from 'fs';
-import https from 'https';
 import morgan from 'morgan';
 import path from 'path';
-import { env } from 'process';
 import { parseForm } from './middlewares/parseForm.js';
+import { _commandsRouter } from './routes/commands.js';
+import { _notesRouter } from './routes/notes.js';
 import { createHttpError } from './utils/createHttpError.js';
+import { env } from 'process';
 
-const privateKey = fs.readFileSync('C:/Users/TOP/Documents/ssl/localhost.key', 'utf8');
-const certificate = fs.readFileSync('C:/Users/TOP/Documents/ssl/local.network.crt', 'utf8');
 const app = express();
-
-const sslOptions = {
-  key: privateKey,
-  cert: certificate
-}
+const port = env.PORT || 5000;
+const routes = [
+	_notesRouter,
+	_commandsRouter,
+]
 
 const handle404 = (req, res, next) => {
-	next(createHttpError(404));
+	res.status(404).send(createHttpError(404));
 }
 const handleErrors = (err, req, res, next) => {
 	res.locals.message = err.message;
@@ -28,48 +26,37 @@ const handleErrors = (err, req, res, next) => {
 	res.status(err.status || 500);
 	res.send(err);
 }
-const setupRoutes = () => {
-	const routesDir = path.resolve('./dist/api/src/routes');
-	
-	return new Promise((resolve) => { 
-		try {
-			fs.readdirSync(routesDir)
-				?.forEach(async (val, index, arr) => {
-					const { default: router } = await import('file://' + path.resolve(routesDir, val));
-					app.use(router.baseRoute, router.router);
-	
-					if(index+1 === arr.length)
-						resolve(null);
-				})
-		} catch (err) {
-			throw Error(err);
-		}	
-	})
-}
 
 export const bootstrapServer = async () => {
-	if(env.NODE_ENV === 'production') {
-		app.use(express.static(path.join(process.cwd(), '../client/dist')))
-		app.get('/*', (req, res) => {
-			res.sendFile(path.join(process.cwd(), '../client/dist/index.html'))
-		})
-	} else {
+	const isDevMode = process.env.NODE_ENV === 'development';
+
+	// if(isDevMode) {
 		app.use(cors({ origin: `*` }))
-	}
+	// }
 
 	app.use(morgan('dev'));
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: false }));
 	app.use(cookieParser());
-	app.use(parseForm())
+	app.use(parseForm());
 	
-	await setupRoutes();
+	app.get('/is-server-up', (req, res) => res.json('yes'));
 
-	app.use(handle404);
+	routes.forEach(({ baseRoute, router }) => {
+		app.use(baseRoute, router)
+	})
+
+	if(!isDevMode) {
+		app.use(express.static(path.join(process.cwd(), '../client/dist')))
+		app.get('/*', (req, res) => {
+			res.sendFile(path.join(process.cwd(), '../client/dist/index.html'))
+		})
+	}
+
 	app.use(handleErrors);
-	const server = https.createServer(sslOptions, app);
+	app.use(handle404);
 
-	server.listen(5000, () => {
-		console.log('Server running at http://192.168.1.70:5000/');
+	app.listen(port, () => {
+		console.log(`Server running at https://localhost:${port}/`);
 	});
 }

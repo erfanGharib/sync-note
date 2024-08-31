@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { T_EditNotes } from "../../../shared/types/T_Notes";
+import { T_EditNote } from "../../../shared/types/T_Note";
 
 const notesInputDefaultValues = { 
     oldTitle: '', 
@@ -7,13 +7,13 @@ const notesInputDefaultValues = {
     text: '',
 }
 
-interface T_NotesInput {
+interface T_NoteInput {
     isEditMode: boolean,
-    defaultValues: T_EditNotes
+    defaultValues: T_EditNote
 }
 
 export const notesInputStore = defineStore('notesInput', {
-    state: (): T_NotesInput => ({ 
+    state: (): T_NoteInput => ({ 
         isEditMode: false,
         defaultValues: notesInputDefaultValues,
     }),
@@ -21,7 +21,7 @@ export const notesInputStore = defineStore('notesInput', {
         emptyValues() {
             this.defaultValues = notesInputDefaultValues;
         },
-        updateValues(newValues: T_EditNotes) {
+        updateValues(newValues: T_EditNote) {
             this.defaultValues = newValues;
         },
         changeMode(isEditMode: boolean) {

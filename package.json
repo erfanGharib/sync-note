@@ -7,11 +7,11 @@
     "start": "cd api && node dist/api/src/index",
     "api:build": "cd api && node scripts/build",
     "api:build:w": "cd api && node scripts/build --watch",
-    "api:dev": "cd api && set NODE_ENV=development && nodemon --exec \"node dist/api/src/index\"",
-    "client:dev": "cd client && vite",
-    "client:build": "cd client && vue-tsc && vite build",
-    "client:preview": "cd client && vite preview",
-    "css:build": "cd client && npx tailwindcss -i src/assets/styles/index.css -o src/assets/styles/tailwind.css -w"
+    "api:dev": "cd api && set NODE_ENV=production&& nodemon --exec \"node dist/api/src/index\"",
+    "client:dev": "npm run changeBaseUrl -- --nodeenv development && cd client && vite",
+    "client:build": "npm run changeBaseUrl -- --nodeenv production && cd client && vite build",
+    "css:build": "cd client && npx tailwindcss -i src/assets/styles/index.css -o src/assets/styles/tailwind.css -w",
+    "changeBaseUrl": "node client/scripts/changeBaseurl.js"
   },
   "dependencies": {
     "axios": "^1.6.8",

@@ -1,13 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './src/*.{vue,svg,html,js,tsx,ts}',
-    './src/**/**/*.{vue,svg,html,js,tsx,ts}',
-    './src/**/*.{vue,svg,html,js,tsx,ts}',
-    './src/components/*.{vue,svg,html,js,jsx,tsx,ts}',
-    './src/components/**/*.{vue,svg,html,js,jsx,tsx,ts}',
-    './src/components/**/**/*.{vue,svg,html,js,jsx,tsx,ts}',
-    './src/assets/**/*.{vue,svg,html,js,jsx,tsx,ts}',
+    './src/*.vue',
+    './src/components/*.vue',
+    './src/components/**/*.vue',
+    './src/assets/**/*.vue',
   ],
   theme: {
     extend: {

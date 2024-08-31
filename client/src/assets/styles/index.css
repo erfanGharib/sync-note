@@ -47,9 +47,6 @@ body, #app {
     @apply h-full w-full flex flex-col bg-[#111111] text-orange-100 overflow-hidden;
     color-scheme: 'dark';
 }
-#app {
-    @apply pt-5 md:pt-10 md:w-3/6 w-full mx-auto relative;
-}
 
 code {
     @apply mx-2;
@@ -72,4 +69,13 @@ code {
 
 ::-webkit-scrollbar-thumb:hover {
     @apply bg-opacity-70;
+}
+
+/* input:focus {
+    @apply !bg-blue-300 text-blue-100 bg-black-800;
+} */
+input:-webkit-autofill {
+    @apply caret-orange-100;
+    box-shadow: 0 0 0px 500px rgb(34 34 34) inset; /* background color when autofilled */
+    -webkit-text-fill-color: rgb(255 237 213); /* text color when autofilled */
 }

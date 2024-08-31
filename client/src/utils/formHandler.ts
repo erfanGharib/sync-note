@@ -1,6 +1,7 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import * as Yup from 'yup';
-import { _axios } from '../../../shared/global';
+import { _axios } from '../../global/global';
+import { offlineModeStore } from '../store/offlineMode';
 import { fireDataFetchedEvent } from './fireDataFetchedEvent';
 
 export type T_YupSchema = { [key: string]: Yup.StringSchema };
@@ -11,7 +12,7 @@ type T_FormHandler = (args: {
     validationSchema: T_YupSchema;
     resetForm?: boolean;
     onSuccess?: (response: AxiosResponse) => void;
-    onFailure?: () => void;
+    onFailure?: (response: any, data: FormData) => void;
     onSubmit?: (formData: FormData, form: Event) => Promise<any>;
     onError?: (reason: string) => void;
 }) => { send: T_Send };
@@ -26,6 +27,7 @@ const formHandler: T_FormHandler = ({
     onError = () => { },
 }) => {
     const expectedInputElements = ['INPUT', 'TEXTAREA', 'CHECKBOX', 'SELECT'];
+    const offlineMode = offlineModeStore();
     let data = new FormData();
     let form: HTMLFormElement = null;
 
@@ -110,6 +112,13 @@ const formHandler: T_FormHandler = ({
         if (!(await onSubmit(data, e))) {
             disableSubmitBtn(false);
         }
+
+        if(offlineMode.isOfflineMode) {
+            onFailure('offlineMode is turned on.', data);
+            if(resetForm) form.reset()
+            return;
+        }
+
         if (_isFormValuesValid) {
             await _axios?.[method](
                 endPoint,
@@ -119,16 +128,18 @@ const formHandler: T_FormHandler = ({
                     onSuccess(res)
                     if(resetForm) form.reset()
                 })
-                .catch((err: AxiosError) => {
+                .catch((err) => {
                     // add response error to last p.err element in form
                     //@ts-ignore
                     const allErr = form.querySelectorAll('p.err');
+
+                    const data = err.response?.data;
                     allErr[allErr.length - 1].innerHTML =
-                        err.response?.data?.['title'] ?? err.message;
+                        data?.['title'] ?? data?.['errors'] ?? err.message;
 
                     console.log(err);
 
-                    onFailure();
+                    onFailure(err, data);
                     disableSubmitBtn(false);
                 })
                 .finally(() => {

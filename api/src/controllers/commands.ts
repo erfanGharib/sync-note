@@ -21,12 +21,12 @@ const schemas = {
     'delete': delete_apiCommandSchema,
 }
 
-export const commandsController = ({ body }: T_Body, res: Response) => {
+export const commandsController = async ({ body }: T_Body, res: Response) => {
     const promises = []
     const commands = isJson(body.commands) as Array<T_ApiCommand>;
     
     for (let index = 0; index < commands.length; index++) {
-        promises.push(new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             const _body = commands[index];
             const schema = schemas[_body.type];
             
@@ -50,11 +50,6 @@ export const commandsController = ({ body }: T_Body, res: Response) => {
                 console.log(errors);
                 res.status(400).send(createHttpError(400, { errors }))
             })
-        }))
+        })
     }
-
-    Promise.all(promises)
-    .then(() => {
-        res.send('ok')
-    })
 }

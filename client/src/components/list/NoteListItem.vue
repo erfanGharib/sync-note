@@ -1,22 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { _axios, apiEndpoints } from '../../../../shared/global';
-import { T_Notes } from '../../../../shared/types/T_Notes';
+import { _axios, apiEndpoints } from '../../../global/global';
+import { T_ApiCommand } from '../../../../shared/types/T_ApiCommand';
+import { T_Note } from '../../../../shared/types/T_Note';
 import { clientTouchYStore } from '../../store/clientTouchY';
+import { notesStore } from '../../store/notes';
 import { notesInputStore } from '../../store/notesInput';
+import { CachedCommands } from '../../utils/cachedCommands';
 import { fireDataFetchedEvent } from '../../utils/fireDataFetchedEvent';
+import { formDataToObj } from '../../utils/formDataToObj';
 import { isMobileDevice } from '../../utils/isMobileDevice';
 
-defineProps<{ note: T_Notes }>();
+defineProps<{ note: T_Note }>();
 
 const clientTouchY = clientTouchYStore();
 const notesInput = notesInputStore();
+const notes = notesStore();
 
 const isHovered = ref(false);
 const isCollapsed = ref(false);
 const buttons = [
     {
-        onclick: (note: T_Notes) => {
+        onclick: (note: T_Note) => {
             clientTouchY.updateValue(0)
             notesInput.changeMode(true)
             notesInput.updateValues({
@@ -27,14 +32,22 @@ const buttons = [
         iconName: "md-modeedit-outlined"
     },
     {
-        onclick: async (note: T_Notes) => {
+        onclick: async (note: T_Note) => {
             if(!confirm(`Are you sure you want to delete \`${note.title}\``)) return;
 
             const data = new FormData();
             data.append('title', note.title);
 
             await _axios.post(apiEndpoints.notes.delete, data)
-            fireDataFetchedEvent();
+            .finally(() => {
+                fireDataFetchedEvent();
+            })
+            .catch(() => {
+                const content = formDataToObj(data) as T_ApiCommand['content'];
+                const cachedCommands = new CachedCommands();
+                cachedCommands.rem(content.title)
+                notes.deleteNote(note.title)
+            })  
         },
         iconName: "fa-regular-trash-alt"
     },
@@ -44,12 +57,14 @@ const buttons = [
 
 <template>
     <div
-        class="p-3 md:p-4 f-center-between w-full rounded-lg mt-2 text-orange-100 bg-black-800 justify-between" 
+        class="note-container p-3 md:p-4 f-center-between w-full rounded-lg mt-2 text-orange-100 bg-black-800 justify-between" 
         @mouseenter='isHovered = true'
         @mouseleave='isHovered = false'
-        @click='isCollapsed = !isCollapsed'
     >
-        <div class='flex flex-col w-[73%]'>
+        <div 
+            @click='isCollapsed = !isCollapsed'
+            class='flex flex-col w-[73%]'
+        >
             <h3 class='text-md'>
                 {{ note.title }}
             </h3>
